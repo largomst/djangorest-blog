@@ -2,7 +2,7 @@ from django.http import Http404
 
 from article.models import Article
 from article.permissions import IsAdminUserOrReadOnly
-from article.serializers import ArticleSerializer, ArticleDetailSerializer
+from article.serializers import ArticleListSerializer, ArticleDetailSerializer
 
 from rest_framework.permissions import IsAdminUser
 from rest_framework import status
@@ -20,5 +20,5 @@ class ArticleDetail(generics.RetrieveUpdateDestroyAPIView):
 
 class ArticleList(generics.ListCreateAPIView):
     queryset = Article.objects.all()
-    serializer_class = ArticleDetailSerializer
+    serializer_class = ArticleListSerializer
     permission_classes = [IsAdminUserOrReadOnly]
