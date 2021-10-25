@@ -15,6 +15,7 @@ from rest_framework import generics
 class ArticleDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Article.objects.all()
     serializer_class = ArticleDetailSerializer
+    permission_classes = [IsAdminUserOrReadOnly]
 
 
 class ArticleList(generics.ListCreateAPIView):
