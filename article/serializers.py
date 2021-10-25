@@ -5,12 +5,13 @@ from user_info.serializers import UserDescSerializer
 
 
 class ArticleListSerializer(serializers.ModelSerializer):
+    url = serializers.HyperlinkedIdentityField(view_name="article:detail")
     author = UserDescSerializer(read_only=True)
 
     class Meta:
         model = Article
         fields = [
-            'id', 'title', 'created', 'author'
+            'id', 'title', 'created', 'author', 'url'
         ]
         read_only_fields = ['author']
 
