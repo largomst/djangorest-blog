@@ -2,23 +2,21 @@ from django.http import Http404
 
 from article.models import Article
 from article.permissions import IsAdminUserOrReadOnly
-from article.serializers import ArticleListSerializer, ArticleDetailSerializer
+from article.serializers import ArticleListSerializer, ArticleDetailSerializer, ArticleSerializer
 
 from rest_framework.permissions import IsAdminUser
 from rest_framework import status
 from rest_framework import generics
+from rest_framework import viewsets
 
 
 # Create your views here.
 
 
-class ArticleDetail(generics.RetrieveUpdateDestroyAPIView):
+class ArticleViewSet(viewsets.ModelViewSet):
     queryset = Article.objects.all()
-    serializer_class = ArticleDetailSerializer
+    serializer_class = ArticleSerializer
     permission_classes = [IsAdminUserOrReadOnly]
 
-
-class ArticleList(generics.ListCreateAPIView):
-    queryset = Article.objects.all()
-    serializer_class = ArticleListSerializer
-    permission_classes = [IsAdminUserOrReadOnly]
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
