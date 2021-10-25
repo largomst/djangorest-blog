@@ -20,3 +20,11 @@ class ArticleViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
+
+    def get_queryset(self):
+        queryset = self.queryset
+        username = self.request.query_params.get('username', None)
+        if username:
+            queryset = self.queryset.filter(author__username=username)
+
+        return queryset
