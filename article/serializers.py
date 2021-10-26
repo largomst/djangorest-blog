@@ -1,3 +1,4 @@
+from django.forms import fields
 from rest_framework import serializers
 
 from article.models import Article, Category, Tag
@@ -14,12 +15,6 @@ class ArticleListSerializer(serializers.ModelSerializer):
             'id', 'title', 'created', 'author', 'url'
         ]
         read_only_fields = ['author']
-
-
-class ArticleDetailSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Article
-        fields = '__all__'
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -68,7 +63,7 @@ class TagSerializer(serializers.HyperlinkedModelSerializer):
         fields = '__all__'
 
 
-class ArticleSerializer(serializers.ModelSerializer):
+class ArticleBaseSerializer(serializers.HyperlinkedModelSerializer):
     author = UserDescSerializer(read_only=True)
     category = CategorySerializer(read_only=True)
     category_id = serializers.IntegerField(
@@ -93,7 +88,26 @@ class ArticleSerializer(serializers.ModelSerializer):
                     Tag.objects.create(title=title)
         return super().to_internal_value(data)
 
+
+class ArticleSerializer(ArticleBaseSerializer):
     class Meta:
         model = Article
         fields = '__all__'
-        ordering = ['-created']
+        extra_kwargs = {
+            'body': {'write_only': True}
+        }
+
+
+class ArticleDetailSerializer(ArticleBaseSerializer):
+    body_html = serializers.SerializerMethodField()
+    toc_html = serializers.SerializerMethodField()
+
+    def get_body_html(self, obj):
+        return obj.get_md()[0]
+
+    def get_toc_html(self, obj):
+        return obj.get_md()[1]
+
+    class Meta:
+        model = Article
+        fields = '__all__'
