@@ -1,5 +1,5 @@
 from unicodedata import category
-from django.forms import fields
+from django.forms import fields, models
 from rest_framework import serializers
 
 from article.models import Article, Category
@@ -31,6 +31,23 @@ class CategorySerializer(serializers.ModelSerializer):
         model = Category
         fields = '__all__'
         read_only_fileds = ['created']
+
+
+class ArticleCategoryDetailSerializer(serializers.ModelSerializer):
+    """用于在 Category 显示简要信息的 Article 序列化器"""
+    url = serializers.HyperlinkedIdentityField(view_name='article-detail')
+
+    class Meta:
+        model = Article
+        fields = ['url', 'title']
+
+
+class CategoryDetailSerialzier(serializers.ModelSerializer):
+    articles = ArticleCategoryDetailSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Category
+        fields = ['id', 'title', 'created', 'articles']
 
 
 class ArticleSerializer(serializers.ModelSerializer):
