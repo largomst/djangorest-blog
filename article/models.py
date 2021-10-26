@@ -5,9 +5,22 @@ from django.contrib.auth.models import User
 # Create your models here.
 
 
+class Category(models.Model):
+    title = models.CharField(max_length=100)
+    created = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        ordering = ['-created']
+
+    def __str__(self) -> str:
+        return self.title
+
+
 class Article(models.Model):
     author = models.ForeignKey(
         User, null=True, on_delete=models.CASCADE, related_name='articles')
+    category = models.ForeignKey(
+        Category, null=True, blank=True, on_delete=models.SET_NULL, related_name='articles')
     title = models.CharField(max_length=100)
     body = models.TextField()
     created = models.DateTimeField(default=timezone.now)

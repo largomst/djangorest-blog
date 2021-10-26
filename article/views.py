@@ -1,8 +1,9 @@
+from django import views
 from django.http import Http404
 
-from article.models import Article
+from article.models import Article, Category
 from article.permissions import IsAdminUserOrReadOnly
-from article.serializers import ArticleListSerializer, ArticleDetailSerializer, ArticleSerializer
+from article.serializers import ArticleListSerializer, ArticleDetailSerializer, ArticleSerializer, CategorySerializer
 
 from rest_framework.permissions import IsAdminUser
 from rest_framework import status
@@ -25,3 +26,9 @@ class ArticleViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
+
+
+class CategoryViewSet(viewsets.ModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    permission_classes = [IsAdminUserOrReadOnly]
