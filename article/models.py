@@ -5,6 +5,16 @@ from django.contrib.auth.models import User
 # Create your models here.
 
 
+class Tag(models.Model):
+    title = models.CharField(max_length=30)
+
+    class Meta:
+        ordering = ['-id']
+
+    def __str__(self):
+        return self.title
+
+
 class Category(models.Model):
     title = models.CharField(max_length=100)
     created = models.DateTimeField(default=timezone.now)
@@ -25,6 +35,8 @@ class Article(models.Model):
     body = models.TextField()
     created = models.DateTimeField(default=timezone.now)
     updated = models.DateTimeField(auto_now=True)
+    tags = models.ManyToManyField(
+        Tag, blank=True, null=True, related_name='articles')
 
     def __str__(self):
         return self.title
