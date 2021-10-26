@@ -28,6 +28,10 @@ class Category(models.Model):
         return self.title
 
 
+class Avatar(models.Model):
+    content = models.ImageField(upload_to="avatar/%Y/%m%d")
+
+
 class Article(models.Model):
     author = models.ForeignKey(
         User, null=True, on_delete=models.CASCADE, related_name='articles')
@@ -39,6 +43,9 @@ class Article(models.Model):
     updated = models.DateTimeField(auto_now=True)
     tags = models.ManyToManyField(
         Tag, blank=True, null=True, related_name='articles')
+    avatar = models.ForeignKey(
+        Avatar, null=True, blank=True, on_delete=models.SET_NULL, related_name='article'
+    )
 
     def __str__(self):
         return self.title

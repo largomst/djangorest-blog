@@ -1,9 +1,9 @@
 from django import views
 from django.http import Http404
 
-from article.models import Article, Category, Tag
+from article.models import Article, Avatar, Category, Tag
 from article.permissions import IsAdminUserOrReadOnly
-from article.serializers import ArticleListSerializer, ArticleDetailSerializer, ArticleSerializer, CategoryDetailSerializer, CategorySerializer, TagSerializer
+from article.serializers import ArticleListSerializer, ArticleDetailSerializer, ArticleSerializer, AvatarSerializer, CategoryDetailSerializer, CategorySerializer, TagSerializer
 
 from rest_framework.permissions import IsAdminUser
 from rest_framework import status
@@ -49,4 +49,10 @@ class CategoryViewSet(viewsets.ModelViewSet):
 class TagViewSet(viewsets.ModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
+    permission_classes = [IsAdminUserOrReadOnly]
+
+
+class AvatarViewSet(viewsets.ModelViewSet):
+    queryset = Avatar.objects.all()
+    serializer_class = AvatarSerializer
     permission_classes = [IsAdminUserOrReadOnly]

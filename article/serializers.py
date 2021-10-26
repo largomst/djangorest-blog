@@ -1,7 +1,7 @@
 from django.forms import fields
 from rest_framework import serializers
 
-from article.models import Article, Category, Tag
+from article.models import Article, Avatar, Category, Tag
 from user_info.serializers import UserDescSerializer
 
 
@@ -63,6 +63,14 @@ class TagSerializer(serializers.HyperlinkedModelSerializer):
         fields = '__all__'
 
 
+class AvatarSerializer(serializers.ModelSerializer):
+    url = serializers.HyperlinkedIdentityField(view_name='avatar-detail')
+
+    class Meta:
+        model = Avatar
+        fields = '__all__'
+
+
 class ArticleBaseSerializer(serializers.HyperlinkedModelSerializer):
     author = UserDescSerializer(read_only=True)
     category = CategorySerializer(read_only=True)
@@ -70,14 +78,19 @@ class ArticleBaseSerializer(serializers.HyperlinkedModelSerializer):
         write_only=True, allow_null=True, required=True)
     tags = serializers.SlugRelatedField(
         queryset=Tag.objects.all(), many=True, required=False, slug_field='title')
+    avatar = AvatarSerializer(read_only=True)
+    avatar_id = serializers.IntegerField(
+        write_only=True,
+        allow_null=True,
+        required=False
+    )
 
     def validate_category_id(self, value):
         """确保传入有效的 category id"""
-        if Category.objects.filter(id=value).exists():
-            return value
-        else:
+        if Category.objects.filter(id=value).exists() and value is not None:
             raise serializers.ValidationError(
                 f'Category with id {value} not exists')
+        return value
 
     def to_internal_value(self, data):
         """创建不存在的标签"""
@@ -87,6 +100,12 @@ class ArticleBaseSerializer(serializers.HyperlinkedModelSerializer):
                 if not Tag.objects.filter(title=title).exists():
                     Tag.objects.create(title=title)
         return super().to_internal_value(data)
+
+    def validate_avatar_id(self, value):
+        if not Avatar.objects.filter(id=value).exists() and value is not None:
+            raise serializers.ValidationError(
+                f'Avatar with id {value} not exists.')
+        return value
 
 
 class ArticleSerializer(ArticleBaseSerializer):
