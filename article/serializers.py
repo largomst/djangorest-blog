@@ -73,6 +73,7 @@ class AvatarSerializer(serializers.ModelSerializer):
 
 
 class ArticleBaseSerializer(serializers.HyperlinkedModelSerializer):
+    id = serializers.IntegerField(read_only=True)
     author = UserDescSerializer(read_only=True)
     category = CategorySerializer(read_only=True)
     category_id = serializers.IntegerField(
