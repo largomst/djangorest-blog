@@ -8,6 +8,20 @@ class UserDescSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'last_login', 'date_joined']
 
 
+class UserDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = [
+            'id',
+            'username',
+            'last_name',
+            'first_name',
+            'email',
+            'last_login',
+            'date_joined'
+        ]
+
+
 class UserRegisterSerializer(serializers.ModelSerializer):
     url = serializers.HyperlinkedIdentityField(
         view_name='user-detail', lookup_field="username")
